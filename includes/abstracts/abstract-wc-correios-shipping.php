@@ -422,7 +422,7 @@ abstract class WC_Correios_Shipping extends WC_Shipping_Method {
 		$additional_days = 0;
 		foreach ($cart_items as $cart_item) {
 			$shipping_class = $cart_item['data']->get_shipping_class();
-			$manufacturing_days = (int)max(0,filter_var($shipping_class, FILTER_SANITIZE_NUMBER_INT));
+			$manufacturing_days = (int) max(0,filter_var($shipping_class, FILTER_SANITIZE_NUMBER_INT));
 
 			if ($manufacturing_days > $additional_days) {
 				$additional_days = $manufacturing_days;
