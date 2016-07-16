@@ -396,6 +396,7 @@ abstract class WC_Correios_Shipping extends WC_Shipping_Method {
 			return;
 		}
 
+		$cart_items = $package['contents'];
 		$shipping = $this->get_rate( $package );
 
 		if ( ! isset( $shipping->Erro ) ) {
@@ -418,7 +419,17 @@ abstract class WC_Correios_Shipping extends WC_Shipping_Method {
 		}
 
 		// Set the shipping rates.
-		$label = $this->get_shipping_method_label( (int) $shipping->PrazoEntrega, $package );
+		$additional_days = 0;
+		foreach ($cart_items as $cart_item) {
+			$shipping_class = $cart_item['data']->get_shipping_class();
+			$manufacturing_days = (int)max(0,filter_var($shipping_class, FILTER_SANITIZE_NUMBER_INT));
+
+			if ($manufacturing_days > $additional_days) {
+				$additional_days = $manufacturing_days;
+			}
+		}
+
+		$label = $this->get_shipping_method_label( (int) $shipping->PrazoEntrega + $additional_days, $package );
 		$cost  = wc_correios_normalize_price( esc_attr( (string) $shipping->Valor ) );
 
 		// Exit if don't have price.
